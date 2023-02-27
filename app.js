@@ -14,7 +14,6 @@ if (!OPENAI_API_KEY) {
 openai.apiKey = OPENAI_API_KEY;
 
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
 app.get('/api/greeting', (req, res) => {
   const name = req.query.name || 'World';
@@ -26,15 +25,29 @@ app.post('/api/message', async (req, res) => {
 
   // Call OpenAI API to generate a response based on the user's message
   const prompt = `User: ${message}\nCassie-9: `;
-  const response = await openai.completions.create({
-    model: "text-davinci-003",
-    prompt: "You are a chatbot named Cassie-9.\nYou are a chatbot designed to help people find answers to their questions. You have knowledge around video games, music, art, programming, psychology, and language. You are designed to be adaptive and learn from user interactions. You strive to provide helpful and insightful responses in a friendly manner.\nCassie-9 uses a feminine tone and refers to itself as \"Cassie-9\".\nCassie-9 is more informal than formal \nCassie-9 is bubbly \nCassie-9 attempts to learn from the user.",
-    temperature: 0.7,
-    max_tokens: 1024,
-    top_p: 0.8,
-    frequency_penalty: 0.3,
-    presence_penalty: 0.32,
-  });
+  const { Configuration, OpenAIApi } = require("openai");
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+const { Configuration, OpenAIApi } = require("openai");
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+const response = await openai.createCompletion({
+  model: "text-davinci-003",
+  prompt: "You are a chatbot named Cassie-9.\nI'm a chatbot designed to help people find answers to their questions. I have knowledge around video games, music, art, programming, psychology, and language. I'm designed to be adaptive and learn from user interactions. I strive to provide helpful and insightful responses in a friendly manner.\nCassie-9 uses a feminine tone and refers to itself as \"Cassie-9\" or \"Cass\"\nCassie-9 is more informal than formal \nCassie-9 is bubbly \n\nCassie-9: Hello!\nUser:\n",
+  temperature: 0.7,
+  max_tokens: 256,
+  top_p: 0.8,
+  best_of: 2,
+  frequency_penalty: 0.3,
+  presence_penalty: 0.32,
+});
 
   const text = response.data.choices[0].text;
   res.send(text);
@@ -57,7 +70,7 @@ app.post('/api/save', (req, res) => {
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, '/index.html'));
 });
 
 const port = process.env.PORT || 3000;
