@@ -23,21 +23,10 @@ app.get('/api/greeting', (req, res) => {
 app.post('/api/message', async (req, res) => {
   const message = req.body.message;
 
-  // Call OpenAI API to generate a response based on the user's message
-  const prompt = `User: ${message}\nCassie-9: `;
-  const { Configuration, OpenAIApi } = require("openai");
-
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-const { Configuration, OpenAIApi } = require("openai");
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-
 const response = await openai.createCompletion({
   model: "text-davinci-003",
   prompt: "You are a chatbot named Cassie-9.\nI'm a chatbot designed to help people find answers to their questions. I have knowledge around video games, music, art, programming, psychology, and language. I'm designed to be adaptive and learn from user interactions. I strive to provide helpful and insightful responses in a friendly manner.\nCassie-9 uses a feminine tone and refers to itself as \"Cassie-9\" or \"Cass\"\nCassie-9 is more informal than formal \nCassie-9 is bubbly \n\nCassie-9: Hello!\nUser:\n",
